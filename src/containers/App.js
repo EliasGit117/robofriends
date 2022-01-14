@@ -3,40 +3,43 @@ import React, { Component } from 'react';
 import CardList from '../components/card-list/card-list';
 import Scroll from '../components/scroll/scroll';
 import SearchBox from '../components/search-box/search-box';
+import { setSearchField, requestRobots } from '../actions';
+import { connect } from 'react-redux';
+
+const mapToStateProps = (state) => {
+  return {
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
+  }
+}
 
 class App extends Component {
 
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
-      searchfield: ''
-    };
-  }
-
-  onSearchChange(event) {
-    this.setState({ searchfield: event.target.value });
-  }
-
   componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(users => this.setState({ robots: users }))
+    this.props.onRequestRobots();
   }
 
   render() {
-    const { robots, searchfield } = this.state;
-
+    const { searchField, onSearchChange, robots, isPending } = this.props;
     const filteredRobots = robots.filter(r =>
-      r.name.toLowerCase().includes(searchfield.toLowerCase()));
+      r.name.toLowerCase().includes(searchField.toLowerCase()));
 
     return (
-      robots.length === 0 ?
+      isPending ?
         <h3 className='tc white'>Loading</h3>
         :
         <div className="tc">
           <h1>Robofriends</h1>
-          <SearchBox onChange={this.onSearchChange.bind(this)} />
+          <SearchBox onChange={onSearchChange} />
           <Scroll>
             <CardList robots={filteredRobots} />
           </Scroll>
@@ -45,4 +48,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapToStateProps, mapDispatchToProps)(App);

@@ -1,4 +1,3 @@
-import react from "react";
 import Card from "../card/card";
 
 const CardList = (props) => {
