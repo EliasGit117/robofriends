@@ -7,6 +7,7 @@ const SearchBox = (props) => {
       <input className="pa2 ba b--green bg-lightest-blue" 
              type='search'
              placeholder='Search robots'
+             aria-label="Search Robots"
              onChange={props.onChange}/>
     </div>
   );
